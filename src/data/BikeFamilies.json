@@ -1,0 +1,80 @@
+[
+    {
+        "882": "31.6",
+        "Status": "WIP",
+        "Bike Families": "Patron MY25",
+        "Available sizes": "M"
+    },
+    {
+        "882": "31.6",
+        "Status": "WIP",
+        "Bike Families": "Voltage_new_t MY24",
+        "Available sizes": "S,M,L,XL"
+    },
+    {
+        "882": "31.6",
+        "Status": "WIP",
+        "Bike Families": "Voltage_new_s MY24",
+        "Available sizes": "S,M,L,XL"
+    },
+    {
+        "882": "31.6",
+        "Status": "WIP",
+        "Bike Families": "Voltage_new_c MY24",
+        "Available sizes": "S,M,L,XL"
+    },
+    {
+        "882": "31.6",
+        "Status": "In production",
+        "Bike Families": "Strike MY24",
+        "Available sizes": "S,M,L,XL"
+    },
+    {
+        "882": "31.6",
+        "Status": "In production",
+        "Bike Families": "Lumen MY23",
+        "Available sizes": "S,M,L,XL"
+    },
+    {
+        "882": "31.6",
+        "Status": "In production",
+        "Bike Families": "Patron MY22",
+        "Available sizes": "S,M,L,XL"
+    },
+    {
+        "882": "31.6",
+        "Status": "In production",
+        "Bike Families": "Spark MY22",
+        "Available sizes": "S,M,L,XL"
+    },
+    {
+        "882": "31.6",
+        "Status": "In production",
+        "Bike Families": "Ransom MY24",
+        "Available sizes": "S,M,L,XL"
+    },
+    {
+        "882": "31.6",
+        "Status": "In production",
+        "Bike Families": "Genius MY23",
+        "Available sizes": "S,M,L,XL"
+    },
+    {
+        "882": "31.6",
+        "Status": "In production",
+        "Bike Families": "Spark_700 MY21",
+        "Available sizes": "XS"
+    },
+    {
+        "882": "31.6",
+        "Status": "In production",
+        "Bike Families": "Ransom_600 MY21",
+        "Available sizes": "XS"
+    },
+    {
+        "882": "31.6",
+        "Status": "In production",
+        "Bike Families": "Ransom_400 MY21",
+        "Available sizes": "XS"
+    }
+]
