@@ -17,64 +17,98 @@ function SaddleHeight({ selectedModel, CustSaddleHeight }) {
     );
 
     if (!item) return;
-    const {
+    let {
       "Angle of the seat tube": seatTubeAngle,
       "Offset of the seat tube": offsetOfTheSeatTube,
       "BB center to top of seatpost": bbCenterToTopOfTheSeatTube,
       "Max seatpost insertion": MaxSeatpostInsertion,
       "Max seatpost insertion w/actuator": MaxSeatpostInsertionWActuator,
     } = item;
+    
+    seatTubeAngle = parseInt(seatTubeAngle);
+    offsetOfTheSeatTube = parseInt(offsetOfTheSeatTube);
+    bbCenterToTopOfTheSeatTube = parseInt(bbCenterToTopOfTheSeatTube);
+    MaxSeatpostInsertion = parseInt(MaxSeatpostInsertion);
+    MaxSeatpostInsertionWActuator = parseInt(MaxSeatpostInsertionWActuator);
 
+
+    function degrees_to_radians(degrees)
+    {
+      const pi = Math.PI;
+      return degrees * (pi/180);
+    }
+    let seatTubeAngleRad=0;
+    seatTubeAngleRad = degrees_to_radians(seatTubeAngle);
     DropperPost.forEach((post, i) => {
-      const postLengthWActuator = post["Post lenght"]; //"Post lenght (with actuator)"
-      const postActuator = post["Actuator"];
+      const postLengthWActuator = parseInt(post["Post lenght"]); //"Post lenght (with actuator)"
+      const postActuator = parseInt(post["Actuator"]);
       const postLength = postLengthWActuator - postActuator; //"Post lenght (without actuator)"
-      const OveralLenght = post["Overal lenght"]; // "Overal lenght (without actuator)"
-      const AF6 = MaxSeatpostInsertion - postLengthWActuator;
-      const AE6 = AF6 - postActuator;
-      const MinPostInsertion = post["Min post insertion"]; // "Overal lenght (without actuator)"
-      const DropperPostName = post["Dropper post name "]; // "Overal lenght (without actuator)"
+      const OveralLenght = parseInt(post["Overal lenght"]); // "Overal lenght (without actuator)"
+      const AE6 = MaxSeatpostInsertion - postLength; //MODIFICATION
+      let AF6 = 0;
+
+      if(MaxSeatpostInsertionWActuator === 0) { //MODIFICATION
+        AF6 = 0; //MODIFICATION
+      } else { //MODIFICATION
+        AF6 = MaxSeatpostInsertionWActuator - postLengthWActuator; //MODIFICATION
+      } //MODIFICATION
+ 
+      const MinPostInsertion = post["Min post insertion"]; // "Min post insertion"
+      const DropperPostName = post["Dropper post name "]; // "Dropper post"
       // AE6 and AF6 are comming from the ppt documentation initialy for the excel file
 
-      const topOfTheSeatpostX =  -Math.cos( seatTubeAngle + Math.asin(offsetOfTheSeatTube / bbCenterToTopOfTheSeatTube) ) *  bbCenterToTopOfTheSeatTube;
-      const topOfTheSeatpostY =   Math.sin( seatTubeAngle + Math.asin(offsetOfTheSeatTube / bbCenterToTopOfTheSeatTube) ) *  bbCenterToTopOfTheSeatTube;
+     
+      const topOfTheSeatpostX =  -Math.cos( seatTubeAngleRad + Math.asin(offsetOfTheSeatTube / bbCenterToTopOfTheSeatTube) ) *  bbCenterToTopOfTheSeatTube; //Might have some issues with RAD/Deg
+      const topOfTheSeatpostY =   Math.sin( seatTubeAngleRad + Math.asin(offsetOfTheSeatTube / bbCenterToTopOfTheSeatTube) ) *  bbCenterToTopOfTheSeatTube; //Might have some issues with RAD/Deg
+
+
       if (AE6 > 0 && AF6 > 0) { // ‘‘AE6’’ and ‘‘AF6’’ values are positive then
-        console.log("AE6 > 0 && AF6 > 0");
+        console.log("1 AE6 > 0 && AF6 > 0");
         // If the limiting factor is ‘‘Seatpost is on the collar’’
-        minimumSaddleHeightX =  topOfTheSeatpostX - Math.cos(seatTubeAngle) * (OveralLenght - postLength);
-        minimumSaddleHeightY =  topOfTheSeatpostY + Math.sin(seatTubeAngle) * (OveralLenght - postLength) + saddleHeight;
-        console.log(minimumSaddleHeightX);
-        console.log(minimumSaddleHeightY);
+        minimumSaddleHeightX =  topOfTheSeatpostX - Math.cos(seatTubeAngleRad) * (OveralLenght - postLength); //Might have some issues with RAD/Deg
+        minimumSaddleHeightY =  topOfTheSeatpostY + Math.sin(seatTubeAngleRad) * (OveralLenght - postLength) + saddleHeight; //Might have some issues with RAD/Deg
+
       } else if (AE6 <= AF6) {
         // If the limiting factor is ‘‘Seatpost is on the frame stop’’
-        console.log("else if (AE6 <= AF6)");
-        const topOfFramestopX = topOfTheSeatpostX + (Math.cos(seatTubeAngle) * MaxSeatpostInsertion);
-        const topOfFramestopY = topOfTheSeatpostY - (Math.sin(seatTubeAngle) * MaxSeatpostInsertion);
-        minimumSaddleHeightX = topOfFramestopX - Math.cos(seatTubeAngle) * OveralLenght;
-        minimumSaddleHeightY = topOfFramestopY + Math.sin(seatTubeAngle) * OveralLenght + saddleHeight;
+        console.log("2 else if (AE6 <= AF6)");
+        const topOfFramestopX = topOfTheSeatpostX + (Math.cos(seatTubeAngleRad) * MaxSeatpostInsertion); //Might have some issues with RAD/Deg
+        const topOfFramestopY = topOfTheSeatpostY - (Math.sin(seatTubeAngleRad) * MaxSeatpostInsertion); //Might have some issues with RAD/Deg
+        minimumSaddleHeightX = topOfFramestopX - Math.cos(seatTubeAngleRad) * OveralLenght;
+        minimumSaddleHeightY = topOfFramestopY + Math.sin(seatTubeAngleRad) * OveralLenght + saddleHeight;
       } else if (AE6 >= AF6) {
         // If the limiting factor is ‘‘Actuator may touch something’’
-        console.log("else if (AE6 >= AF6)");
-        const topOfFramestopXWActuator =  topOfTheSeatpostX + (Math.cos(seatTubeAngle) * MaxSeatpostInsertionWActuator);
-        const topOfFramestopYWActuator =  topOfTheSeatpostY - (Math.sin(seatTubeAngle) * MaxSeatpostInsertionWActuator);
-        minimumSaddleHeightX = topOfFramestopXWActuator - Math.cos(seatTubeAngle) * (OveralLenght + postActuator);
-        minimumSaddleHeightY = topOfFramestopYWActuator + Math.sin(seatTubeAngle) * (OveralLenght + postActuator) + saddleHeight;
-      } 
+        console.log("3 else if (AE6 >= AF6)");
+        const topOfFramestopXWActuator =  topOfTheSeatpostX + (Math.cos(seatTubeAngleRad) * MaxSeatpostInsertionWActuator); //Might have some issues with RAD/Deg
+        const topOfFramestopYWActuator =  topOfTheSeatpostY - (Math.sin(seatTubeAngleRad) * MaxSeatpostInsertionWActuator); //Might have some issues with RAD/Deg
+        minimumSaddleHeightX = topOfFramestopXWActuator - Math.cos(seatTubeAngleRad) * (OveralLenght + postActuator); //Might have some issues with RAD/Deg
+        // console.log("topOfFramestopXWActuator : "+topOfFramestopXWActuator);
+        // console.log("Math.cos(seatTubeAngleRad) : "+Math.cos(seatTubeAngleRad));
+        // console.log("OveralLenght : "+OveralLenght);
+        // console.log("postActuator : "+postActuator);
+        minimumSaddleHeightY = topOfFramestopYWActuator + Math.sin(seatTubeAngleRad) * (OveralLenght + postActuator) + saddleHeight; //Might have some issues with RAD/Deg
+        //console.log(parseInt(OveralLenght) + parseInt(postActuator));
+        // console.log("topOfFramestopYWActuator : "+topOfFramestopYWActuator);
+        // console.log("Math.sin(seatTubeAngleRad) : "+Math.sin(seatTubeAngleRad));
+        // console.log("OveralLenght : "+OveralLenght);
+        // console.log("postActuator : "+postActuator);
+        // console.log("saddleHeight : "+saddleHeight);
 
-      maximumSaddleHeightX = topOfTheSeatpostX - Math.cos(seatTubeAngle) * (OveralLenght - MinPostInsertion);
-      maximumSaddleHeightY = topOfTheSeatpostY + Math.sin(seatTubeAngle) * (OveralLenght - MinPostInsertion) + saddleHeight;
+      }
+ 
+      // console.log("minimumSaddleHeightX : "+minimumSaddleHeightX);
+      // console.log("minimumSaddleHeightY : "+minimumSaddleHeightY);
 
+      maximumSaddleHeightX = topOfTheSeatpostX - Math.cos(seatTubeAngleRad) * (OveralLenght - MinPostInsertion);
+      maximumSaddleHeightY = topOfTheSeatpostY + Math.sin(seatTubeAngleRad) * (OveralLenght - MinPostInsertion) + saddleHeight;
+ 
       const minimumSaddleHeight = Math.sqrt( Math.pow(minimumSaddleHeightX, 2) + Math.pow(minimumSaddleHeightY, 2));
       const maximumSaddleHeight = Math.sqrt( Math.pow(maximumSaddleHeightX, 2) + Math.pow(maximumSaddleHeightY, 2));
-
-      if (minimumSaddleHeight > maximumSaddleHeight) { 
-         // console.log( "WARNING: minimum saddle height is greater than maximum saddle height" );
+      if( minimumSaddleHeight < maximumSaddleHeight ) {
+      console.log("minimumSaddleHeight : "+minimumSaddleHeight);
+      console.log("maximumSaddleHeight : "+maximumSaddleHeight);
       }
-      // console.log( "minimum : " +  minimumSaddleHeight + " | maximum : " + maximumSaddleHeight );
-      if (minimumSaddleHeight > maximumSaddleHeight) { 
-       // console.log( "-------------" );
-      }
-
+      console.log("minimumSaddleHeight : "+minimumSaddleHeight);
+      console.log("maximumSaddleHeight : "+maximumSaddleHeight);
       if ( CustSaddleHeight > minimumSaddleHeight && CustSaddleHeight < maximumSaddleHeight ) {
         resultArr.push({
           "Dropper post": DropperPostName,
@@ -83,6 +117,7 @@ function SaddleHeight({ selectedModel, CustSaddleHeight }) {
         });
       }
     });
+ 
 
     setResult(resultArr);
   }, [selectedModel, CustSaddleHeight]);
